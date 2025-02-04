@@ -1,8 +1,8 @@
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicComboBoxUI;
-import javax.swing.plaf.metal.MetalComboBoxUI;
-import javax.swing.plaf.multi.MultiComboBoxUI;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class MyFrame extends JFrame {
 
@@ -15,6 +15,7 @@ public class MyFrame extends JFrame {
     JComboBox<String> fromUnitBox;
     JComboBox<String> toUnitBox;
     JTextField outputField;
+    MenuConfig menuConfig;
 
 
     MyFrame(){
@@ -36,6 +37,8 @@ public class MyFrame extends JFrame {
         fromUnitBox = new JComboBox<>(new String[]{"1231","3212"});
         toUnitBox = new JComboBox<>(new String[]{"1231","3212"});
         outputField = new JTextField();
+        //Initialize Classes
+        menuConfig = new MenuConfig(buttonLength);
 
         //Set properties for the button that goes to the length panel
         buttonLength.setFocusPainted(false);
@@ -43,9 +46,9 @@ public class MyFrame extends JFrame {
         buttonLength.setFont(new Font("Segoe UI",Font.BOLD,16));
         buttonLength.setBackground(new Color(0x3A0CA3));
         buttonLength.setForeground(Color.white);
-        buttonTemp.setMargin(new Insets(0,5,0,5));
+        buttonLength.setMargin(new Insets(0,5,0,5));
         //Make the button selected by default
-        buttonLength.setBorder(BorderFactory.createMatteBorder(2,0,0,2,Color.black));
+        buttonLength.setBorder(BorderFactory.createMatteBorder(2,2,0,2,Color.black));
 
         //Set properties for the button that goes to the temperature panel
         buttonTemp.setFocusPainted(false);
@@ -55,6 +58,16 @@ public class MyFrame extends JFrame {
         buttonTemp.setForeground(Color.white);
         buttonTemp.setMargin(new Insets(0,5,0,5));
         buttonTemp.setBorder(BorderFactory.createMatteBorder(2,2,2,2,Color.black));
+
+        //Add action listeners to the buttons
+        buttonTemp.addActionListener(e->{
+            menuConfig.makeTabClickable(buttonTemp);
+            repaint();
+        });
+        buttonLength.addActionListener(e->{
+            menuConfig.makeTabClickable(buttonLength);
+            repaint();
+        });
 
         //Set properties for the input and output text fields
         inputField.setBounds(100,50,300,50);
@@ -96,7 +109,8 @@ public class MyFrame extends JFrame {
 
         //Set properties for the main panel
         mainPanel.setBackground(new Color(0x3A0CA3));
-        mainPanel.setBounds(0,45,500,455);
+        mainPanel.setBorder(BorderFactory.createMatteBorder(0,2,2,2,Color.black));
+        mainPanel.setBounds(0,45,486,418);
         mainPanel.setLayout(null);
 
         //Add the items to the panels and then to the frame
