@@ -3,6 +3,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +28,6 @@ public class MyFrame extends JFrame {
     MyFrame(){
         initializeUI();
         declareUnits();
-        updateTextField();
     }
 
     private void initializeUI(){
@@ -78,18 +79,21 @@ public class MyFrame extends JFrame {
         //Add action listeners to the buttons
         buttonLength.addActionListener(e->{
             menuConfig.makeTabClickable(buttonLength);
-            repaint();
             fromUnitBox.setModel(new JComboBox<>(lengthUnits).getModel());
             toUnitBox.setModel(new JComboBox<>(lengthUnits).getModel());
             toUnitBox.setSelectedItem(toUnitBox.getItemAt(1));
+            updateOutput();
+            repaint();
         });
 
         buttonTemp.addActionListener(e->{
             menuConfig.makeTabClickable(buttonTemp);
-            repaint();
             fromUnitBox.setModel(new JComboBox<>(temperatureUnits).getModel());
             toUnitBox.setModel(new JComboBox<>(temperatureUnits).getModel());
             toUnitBox.setSelectedItem(toUnitBox.getItemAt(1));
+            updateOutput();
+            repaint();
+
         });
         //Set properties for the input and output text fields
         inputField.setBounds(100,50,300,50);
@@ -99,17 +103,17 @@ public class MyFrame extends JFrame {
         inputField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                updateTextField();
+                updateOutput();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                updateTextField();
+                updateOutput();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                updateTextField();
+                updateOutput();
             }
         });
 
@@ -128,9 +132,15 @@ public class MyFrame extends JFrame {
         fromUnitBox.setForeground(Color.white);
         fromUnitBox.setFocusable(false);
         fromUnitBox.setBackground(new Color(0x4361EE));
+        fromUnitBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateOutput();
+            }
+        });
 
 
-        toUnitBox.setBounds(130,230,240,50);
+                toUnitBox.setBounds(130, 230, 240, 50);
         toUnitBox.setUI(new BasicComboBoxUI());
         toUnitBox.setFont(new Font("Segoe UI",Font.BOLD,24));
         toUnitBox.setBorder(null);
@@ -138,6 +148,12 @@ public class MyFrame extends JFrame {
         toUnitBox.setFocusable(false);
         toUnitBox.setSelectedItem(toUnitBox.getItemAt(1));
         toUnitBox.setBackground(new Color(0x4361EE));
+        toUnitBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateOutput();
+            }
+        });
 
 
 
@@ -194,7 +210,7 @@ public class MyFrame extends JFrame {
     }
 
     //Update output field when something is typed in the input field
-    public void updateTextField(){
+    public void updateOutput(){
         String input = inputField.getText();
         try {
             if (!input.isEmpty()){
