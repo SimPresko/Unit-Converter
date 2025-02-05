@@ -237,20 +237,7 @@ public class MyFrame extends JFrame {
     //Declaring a class for every unit and putting it in a map
     private void declareUnits(){
         for (String s : lengthUnits){
-            double convFactor = switch (s) {
-                case "Meter" -> 1.0;
-                case "Kilometer" -> 0.001;
-                case "Centimeter" -> 100.0;
-                case "Millimeter" -> 1000.0;
-                case "Micrometer" -> 1000000.0;
-                case "Nanometer" -> 1000000000.0;
-                case "Mile" -> 1/1609.344;
-                case "Yard" -> 1/0.9144;
-                case "Foot" -> 1/0.3048;
-                case "Inch" -> 1/0.0254;
-                default -> -1.0;
-            };
-            Unit u = new LengthUnit(s,"length", convFactor);
+            Unit u = new LengthUnit(s,"length", getConvFactor(s));
             units.put(s,u);
         }
         for (String s : temperatureUnits){
@@ -258,38 +245,43 @@ public class MyFrame extends JFrame {
             units.put(s,u);
         }
         for (String s : weightUnits){
-            double convFactor = switch (s) {
-                case "Kilogram" -> 1.0;
-                case "Gram" -> 1000.0;
-                case "Milligram" -> 1000000.0;
-                case "Metric Ton" -> 0.001;
-                case "Long Ton" -> 1/1016.04608;
-                case "Short Ton" -> 1/907.184;
-                case "Pound" -> 1/0.453592;
-                case "Ounce" -> 1/0.0283495;
-                case "Carat" -> 5000.0;
-                default -> -1.0;
-            };
-            Unit u = new WeightUnit(s,"weight", convFactor);
+            Unit u = new WeightUnit(s,"weight", getConvFactor(s));
             units.put(s,u);
         }
         for (String s : timeUnits){
-            double convFactor = switch (s) {
-                case "Minute" -> 1.0;
-                case "Second" -> 60.0;
-                case "Millisecond" -> 60000.0;
-                case "Microsecond" -> 60000000.0;
-                case "Nanosecond" -> 60000000000.0;
-                case "Hour" -> 1/60.0;
-                case "Day" -> 1/1440.0;
-                case "Week" -> 1/10080.0;
-                case "Month" -> 1/43200.0;
-                case "Year" -> 1/525600.0;
-                default -> -1.0;
-            };
-            Unit u = new TimeUnit(s,"time", convFactor);
+            Unit u = new TimeUnit(s,"time", getConvFactor(s));
             units.put(s,u);
         }
+    }
+
+    private double getConvFactor(String s) {
+        return switch (s) {
+            case "Meter","Kilogram","Minute" -> 1.0;
+            case "Kilometer","Metric Ton" -> 0.001;
+            case "Centimeter" -> 100.0;
+            case "Millimeter","Gram" -> 1000.0;
+            case "Micrometer","Milligram" -> 1000000.0;
+            case "Nanometer" -> 1000000000.0;
+            case "Mile" -> 1/1609.344;
+            case "Yard" -> 1/0.9144;
+            case "Foot" -> 1/0.3048;
+            case "Inch" -> 1/0.0254;
+            case "Long Ton" -> 1/1016.04608;
+            case "Short Ton" -> 1/907.184;
+            case "Pound" -> 1/0.453592;
+            case "Ounce" -> 1/0.0283495;
+            case "Carat" -> 5000.0;
+            case "Second" -> 60.0;
+            case "Millisecond" -> 60000.0;
+            case "Microsecond" -> 60000000.0;
+            case "Nanosecond" -> 60000000000.0;
+            case "Hour" -> 1/60.0;
+            case "Day" -> 1/1440.0;
+            case "Week" -> 1/10080.0;
+            case "Month" -> 1/43200.0;
+            case "Year" -> 1/525600.0;
+            default -> -1.0;
+        };
     }
 
     //Update output field when something is typed in the input field
