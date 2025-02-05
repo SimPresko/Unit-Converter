@@ -1,24 +1,33 @@
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.Map;
+
+import static java.util.Map.entry;
 
 public class MyFrame extends JFrame {
 
     //Declare variables
-    JButton buttonLength;
-    JButton buttonTemp;
-    JPanel headerPanel;
-    JPanel mainPanel;
-    JTextField inputField;
-    JComboBox<String> fromUnitBox;
-    JComboBox<String> toUnitBox;
-    JTextField outputField;
-    MenuConfig menuConfig;
+    public JButton buttonLength;
+    public JButton buttonTemp;
+    public JPanel headerPanel;
+    public JPanel mainPanel;
+    public JTextField inputField;
+    public String[] lengthUnits;
+    public String[] temperatureUnits;
+    public Map<String,Double> lengthFactors;
+    public JComboBox<String> fromUnitBox;
+    public JComboBox<String> toUnitBox;
+    public JTextField outputField;
+    public MenuConfig menuConfig;
 
 
     MyFrame(){
+        initializeUI();
+        declareUnits();
+    }
+
+    private void initializeUI(){
         //Configure UI when calling the constructor
 
         //Set frame Properties
@@ -34,8 +43,23 @@ public class MyFrame extends JFrame {
         mainPanel = new JPanel();
         headerPanel = new JPanel();
         inputField = new JTextField();
-        fromUnitBox = new JComboBox<>(new String[]{"1231","3212"});
-        toUnitBox = new JComboBox<>(new String[]{"1231","3212"});
+        //HashMap for the Units idea (not sure yet)
+        lengthFactors = Map.ofEntries(
+                entry("Meter",1.0),
+                entry("Kilometer",0.001),
+                entry("Centimeter",100.0),
+                entry("Millimeter",1000.0),
+                entry("Micrometer",1000000.0),
+                entry("Nanometer",1000000000.0),
+                entry("Mile",0.0006213712),
+                entry("Yard",1.0936132983),
+                entry("Foot",3.280839895),
+                entry("Inch",39.37007874)
+        );
+        lengthUnits = new String[]{"Meter","Kilometer","Centimeter","Millimeter","Micrometer","Nanometer","Mile","Yard","Foot","Inch"};
+        temperatureUnits = new String[]{"Celsius","Kelvin","Fahrenheit"};
+        fromUnitBox = new JComboBox<>(lengthUnits);
+        toUnitBox = new JComboBox<>(lengthUnits);
         outputField = new JTextField();
         //Initialize Classes
         menuConfig = new MenuConfig(buttonLength);
@@ -60,15 +84,21 @@ public class MyFrame extends JFrame {
         buttonTemp.setBorder(BorderFactory.createMatteBorder(2,2,2,2,Color.black));
 
         //Add action listeners to the buttons
-        buttonTemp.addActionListener(e->{
-            menuConfig.makeTabClickable(buttonTemp);
-            repaint();
-        });
         buttonLength.addActionListener(e->{
             menuConfig.makeTabClickable(buttonLength);
             repaint();
+            fromUnitBox.setModel(new JComboBox<>(lengthUnits).getModel());
+            toUnitBox.setModel(new JComboBox<>(lengthUnits).getModel());
+            toUnitBox.setSelectedItem(toUnitBox.getItemAt(1));
         });
 
+        buttonTemp.addActionListener(e->{
+            menuConfig.makeTabClickable(buttonTemp);
+            repaint();
+            fromUnitBox.setModel(new JComboBox<>(temperatureUnits).getModel());
+            toUnitBox.setModel(new JComboBox<>(temperatureUnits).getModel());
+            toUnitBox.setSelectedItem(toUnitBox.getItemAt(1));
+        });
         //Set properties for the input and output text fields
         inputField.setBounds(100,50,300,50);
         inputField.setFont(new Font("Segoe UI",Font.BOLD,24));
@@ -97,6 +127,7 @@ public class MyFrame extends JFrame {
         toUnitBox.setBorder(null);
         toUnitBox.setForeground(Color.white);
         toUnitBox.setFocusable(false);
+        toUnitBox.setSelectedItem(toUnitBox.getItemAt(1));
         toUnitBox.setBackground(new Color(0x4361EE));
 
 
@@ -126,6 +157,19 @@ public class MyFrame extends JFrame {
         //Set frame to be visible
         this.setLayout(null);
         this.setVisible(true);
+    }
+
+    //Declaring all units in this method
+    private void declareUnits(){
+        for (String s : lengthUnits){
+            Unit u = new LengthUnit(s,"length",lengthFactors.get(s));
+        }
+        for (String s : temperatureUnits){
+            if (s.equals("Celsius")) {
+                Unit u = new TemperatureUnit(s,"temperature");
+            }
+
+        }
     }
 
 
