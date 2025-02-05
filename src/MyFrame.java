@@ -1,9 +1,8 @@
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.awt.*;
+import java.util.HashMap;
 import java.util.Map;
-
-import static java.util.Map.entry;
 
 public class MyFrame extends JFrame {
 
@@ -15,7 +14,7 @@ public class MyFrame extends JFrame {
     public JTextField inputField;
     public String[] lengthUnits;
     public String[] temperatureUnits;
-    public Map<String,Double> lengthFactors;
+    public Map<String,Unit> units;
     public JComboBox<String> fromUnitBox;
     public JComboBox<String> toUnitBox;
     public JTextField outputField;
@@ -43,19 +42,9 @@ public class MyFrame extends JFrame {
         mainPanel = new JPanel();
         headerPanel = new JPanel();
         inputField = new JTextField();
-        //HashMap for the Units idea (not sure yet)
-        lengthFactors = Map.ofEntries(
-                entry("Meter",1.0),
-                entry("Kilometer",0.001),
-                entry("Centimeter",100.0),
-                entry("Millimeter",1000.0),
-                entry("Micrometer",1000000.0),
-                entry("Nanometer",1000000000.0),
-                entry("Mile",0.0006213712),
-                entry("Yard",1.0936132983),
-                entry("Foot",3.280839895),
-                entry("Inch",39.37007874)
-        );
+        //HashMap for all units
+        units = new HashMap<>();
+        //String arrays for the unit types
         lengthUnits = new String[]{"Meter","Kilometer","Centimeter","Millimeter","Micrometer","Nanometer","Mile","Yard","Foot","Inch"};
         temperatureUnits = new String[]{"Celsius","Kelvin","Fahrenheit"};
         fromUnitBox = new JComboBox<>(lengthUnits);
@@ -159,16 +148,28 @@ public class MyFrame extends JFrame {
         this.setVisible(true);
     }
 
-    //Declaring all units in this method
+    //Declaring a class for every unit and putting it in a map
     private void declareUnits(){
         for (String s : lengthUnits){
-            Unit u = new LengthUnit(s,"length",lengthFactors.get(s));
+            double convFactor = switch (s) {
+                case "Meter" -> 1.0;
+                case "Kilometer" -> 0.001;
+                case "Centimeter" -> 100.0;
+                case "Millimeter" -> 1000.0;
+                case "Micrometer" -> 1000000.0;
+                case "Nanometer" -> 1000000000.0;
+                case "Mile" -> 0.0006213712;
+                case "Yard" -> 1.0936132983;
+                case "Foot" -> 3.280839895;
+                case "Inch" -> 39.37007874;
+                default -> -1.0;
+            };
+            Unit u = new LengthUnit(s,"length", convFactor);
+            units.put(s,u);
         }
         for (String s : temperatureUnits){
-            if (s.equals("Celsius")) {
-                Unit u = new TemperatureUnit(s,"temperature");
-            }
-
+            Unit u = new TemperatureUnit(s,"temperature");
+            units.put(s,u);
         }
     }
 
