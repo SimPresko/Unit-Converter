@@ -11,7 +11,6 @@ public abstract class Unit {
         this.type = type;
     }
 
-
     //Getters and Setters for name and type
     public String getName(){
         return this.name;
