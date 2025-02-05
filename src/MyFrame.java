@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.awt.*;
 import java.util.HashMap;
@@ -24,6 +26,7 @@ public class MyFrame extends JFrame {
     MyFrame(){
         initializeUI();
         declareUnits();
+        updateTextField();
     }
 
     private void initializeUI(){
@@ -92,6 +95,23 @@ public class MyFrame extends JFrame {
         inputField.setBounds(100,50,300,50);
         inputField.setFont(new Font("Segoe UI",Font.BOLD,24));
         inputField.setForeground(new Color(0x4361EE));
+        inputField.setCaretColor(new Color(0x4361EE));
+        inputField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updateTextField();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateTextField();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateTextField();
+            }
+        });
 
         outputField.setBounds(100,330,300,50);
         outputField.setFont(new Font("Segoe UI",Font.BOLD,24));
@@ -170,6 +190,24 @@ public class MyFrame extends JFrame {
         for (String s : temperatureUnits){
             Unit u = new TemperatureUnit(s,"temperature");
             units.put(s,u);
+        }
+    }
+
+    //Update output field when something is typed in the input field
+    public void updateTextField(){
+        String input = inputField.getText();
+        try {
+            if (!input.isEmpty()){
+                double value = Double.parseDouble(input);
+                String fromUnit = (String) fromUnitBox.getSelectedItem();
+                String toUnit = (String) toUnitBox.getSelectedItem();
+                double result = units.get(toUnit).fromBaseUnit(units.get(fromUnit).toBaseUnit(value));
+                outputField.setText(String.valueOf(result));
+            }
+        } catch (Exception e){
+            if (input.contains(",")) outputField.setText("Use '.' instead of ','");
+            else outputField.setText("Enter valid number");
+            System.out.println("Exception");
         }
     }
 
